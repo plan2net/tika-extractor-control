@@ -25,7 +25,9 @@ class Indexer extends \TYPO3\CMS\Core\Resource\Index\Indexer
     {
         parent::__construct($storage);
 
-        $this->configuration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['tika_extractor_control']);
+        if (!empty($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['tika_extractor_control'])) {
+            $this->configuration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['tika_extractor_control']);
+        }
     }
 
     /**
@@ -35,6 +37,11 @@ class Indexer extends \TYPO3\CMS\Core\Resource\Index\Indexer
      */
     public function extractMetaData(File $fileObject)
     {
+        if (empty($this->configuration['excludeMetadataFields'])) {
+            parent::extractMetaData($fileObject);
+            return;
+        }
+
         $currentMetaData = $fileObject->_getMetaData();
         $newMetaData = [
             0 => $currentMetaData
@@ -58,12 +65,10 @@ class Indexer extends \TYPO3\CMS\Core\Resource\Index\Indexer
         $metaData = array_merge(...$metaData);
 
         // Exclude specified fields
-        if (!empty($this->configuration['excludeMetadataFields'])) {
-            $excludeMetadataFields = explode(',', $this->configuration['excludeMetadataFields']);
-            foreach ($metaData as $field => $value) {
-                if (\in_array($field, $excludeMetadataFields, true) === true) {
-                    $metaData[$field] = $currentMetaData[$field] ?? '';
-                }
+        $excludeMetadataFields = explode(',', $this->configuration['excludeMetadataFields']);
+        foreach ($metaData as $field => $value) {
+            if (\in_array($field, $excludeMetadataFields, true) === true) {
+                $metaData[$field] = $currentMetaData[$field] ?? '';
             }
         }
 
