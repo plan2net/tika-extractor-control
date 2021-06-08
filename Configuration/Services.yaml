@@ -1,0 +1,14 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  Plan2net\TikaExtractorControl\:
+    resource: '../Classes/*'
+
+  Plan2net\TikaExtractorControl\Command\RemoveFileMetadataCommand:
+    tags:
+      - name: 'console.command'
+        command: 'tika_extractor_control:metadata:remove'
+        description: 'Empties specified metadata fields for files'

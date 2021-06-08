@@ -1,13 +1,19 @@
 {
   "name": "plan2net/tika-extractor-control",
-  "description": "Configuration options for tika metadata extraction",
+  "description": "Configuration options for (tika) metadata extraction",
   "type": "typo3-cms-extension",
   "require": {
+    "php": "^7.4",
     "apache-solr-for-typo3/tika": "*"
   },
   "autoload": {
     "psr-4": {
       "Plan2net\\TikaExtractorControl\\": "Classes"
+    }
+  },
+  "extra": {
+    "typo3/cms": {
+      "extension-key": "tika_extractor_control"
     }
   }
 }
